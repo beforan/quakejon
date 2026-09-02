@@ -2,21 +2,40 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
+    font-family: monospace;
 }
 
-main {
+.splash-back {
     background-color: black;
     background-image: url("i/qj2027_wall_1440.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    
-    width: 100%;
-    height: 100vh;
+}
+
+main {
+    /* width: 100%;
+    height: 100vh; */
+
+    position: relative;
+    z-index: 10; 
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .buttons {
+    /* Pulls the container out of the layout flow and pins it */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    
+    /* Forces buttons to sit above the Matrix rain and content layers */
+    z-index: 20; 
+
     width: 15rem;
     display: flex;
     flex-direction: column;
@@ -25,6 +44,7 @@ main {
 
 
     justify-self: end;
+
 }
 
 a.download-button {
@@ -48,17 +68,22 @@ a.download-button:focus-visible {
     outline-offset: 2px;
 }
 
-p.tag-text {
+.tag-text {
+    width: 20rem;
     padding: 1rem;
     background-color: rgba(0, 0, 0, 0.6);
-    color: #95ffa8; /* Match your brand color */
+    /* Matrix green theme with a glowing text-shadow */
+    color: #00ff41;
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.8);
 }
 
 .typing-text::after {
     content: "█"; /* The cursor character */
     margin-left: 2px;
     font-weight: normal;
-    color: #95ffa8; /* Match your brand color */
+    /* Matrix green theme with a glowing text-shadow */
+    color: #00ff41;
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.8);
     
     /* Apply the blink animation */
     animation: blink 1s steps(2, start) infinite;
@@ -71,12 +96,85 @@ p.tag-text {
     }
 }
 
-/* Fixes for ultrawide */
-@media (min-aspect-ratio: 21/9) {
-    main {
-        background-size: contain;
+/* Base container setup to lock it full-screen */
+.matrix-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000; /* Deep black void background */
+    overflow: hidden;
+    display: flex;
+    justify-content: space-around; /* Distributes rain columns evenly */
+    z-index: -1; /* Pushes the effect behind your text/buttons */
+    font-family: monospace;
+    font-size: 20px;
+}
+
+/* Individual falling streams */
+.matrix-column {
+    /* Writes text vertically down the screen */
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    
+    /* Matrix green theme with a glowing text-shadow */
+    color: #00ff41;
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.8);
+    
+    /* Fades the top and bottom edges so code doesn't look cut off */
+    mask-image: linear-gradient(to bottom, transparent 0%, #fff 20%, #fff 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #fff 20%, #fff 80%, transparent 100%);
+    
+    /* Animation tracking */
+    transform: translateY(-100%);
+    animation: rain var(--speed) linear infinite;
+    animation-delay: var(--delay);
+}
+
+/* The falling animation loop */
+@keyframes rain {
+    0% {
+        transform: translateY(-100%);
     }
-    p.tag-text {
-        background-color: unset;
+    100% {
+        transform: translateY(100vh);
     }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .matrix-column {
+        animation: none;
+        transform: translateY(0); /* Pauses the letters statically across the canvas */
+    }
+}
+
+/* Container to orchestrate layering */
+.splash-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Forces everything in this box to sit above the background rain */
+.content-layer {
+    position: relative;
+    z-index: 10; 
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* The logo styling */
+.logo-overlay {
+    max-width: 80%; /* Ensures scalability on mobile aspect ratios */
+    height: auto;
+    margin-bottom: 30px;
+    
+    /* Mix options: Clean outline + soft shadow for ultimate clarity */
+    filter: drop-shadow(0px 0px 4px #000000) drop-shadow(0px 0px 20px rgba(0, 0, 0, 0.9));
 }
